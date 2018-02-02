@@ -1,7 +1,12 @@
 var camera, scene, renderer;
 var container;
 
+var wolf = 'model/Wolf-Rigged-and-Game-Ready/Wolf_fbx.fbx';
+var capoeira = 'model/Capoeira.fbx';
+var minion = 'model/Minion_FBX.fbx';
+
 init();
+render();
 
 function init(){
     // container
@@ -10,7 +15,7 @@ function init(){
 
     // camera
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 2000 );
-    camera.position.set(0, 40, 50);
+    camera.position.set(0, -90, 0);
 
     // scene
     scene = new THREE.Scene();
@@ -32,15 +37,29 @@ function init(){
     var ambient = new THREE.AmbientLight( 0x101030);
     scene.add(ambient);
 
+    // spotlight
+    var spotlight = new THREE.SpotLight( 0xffffff );
+    spotlight.position.set(1000,-1000,1000);
+    spotlight.castShadow = true;
+    spotlight.shadow.mapSize.width = 1024;
+    spotlight.shadow.mapSize.height = 1024;
+    spotlight.shadow.camera.near = 500; 
+    spotlight.shadow.camera.far = 4000;
+    spotlight.shadow.camera.fov = 30;
+    scene.add(spotlight);
+
     // camera look at
     camera.lookAt(plane.position);
 
     // loader
     var loader = new THREE.FBXLoader();
     loader.load(
-        'model/Wolf-Rigged-and-Game-Ready/Wolf_fbx.fbx',
+        // wolf,
+        // capoeira,
+        minion,
         function(object){
-            object.scale.set(0.5, 0.5, 0.5);
+            object.scale.set(2, 2, 2);
+            object.rotation.x = 90;
             scene.add(object)
         }
     )
@@ -49,5 +68,4 @@ function init(){
 function render(){
     requestAnimationFrame(render);
     renderer.render(scene, camera);
-
 }
