@@ -28,6 +28,10 @@ function init(){
     plane.position.set( 0, 0, -1);
     scene.add( plane );
 
+    // ambient light
+    var ambient = new THREE.AmbientLight( 0x101030);
+    scene.add(ambient);
+
     // camera look at
     camera.lookAt(plane.position);
 
