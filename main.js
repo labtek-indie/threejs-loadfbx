@@ -1,9 +1,9 @@
 var camera, scene, renderer;
-var container;
+var container, mesh;
 
 var wolf = 'model/Wolf-Rigged-and-Game-Ready/Wolf_fbx.fbx';
 var capoeira = 'model/Capoeira.fbx';
-var minion = 'model/Minion_FBX.fbx';
+var minion = 'Minion_FBX.fbx';
 
 init();
 render();
@@ -34,8 +34,12 @@ function init(){
     scene.add( plane );
 
     // ambient light
-    var ambient = new THREE.AmbientLight( 0x101030);
+    var ambient = new THREE.AmbientLight( 0x101030, 4.0);
     scene.add(ambient);
+
+    light = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+	light.position.set(0, 1, 0);
+	scene.add(light);
 
     // spotlight
     var spotlight = new THREE.SpotLight( 0xffffff );
@@ -58,11 +62,28 @@ function init(){
         // capoeira,
         minion,
         function(object){
-            object.scale.set(2, 2, 2);
-            object.rotation.x = 90;
-            scene.add(object)
+            mesh = object;
+            mesh.scale.set(2, 2, 2);
+            // mesh.scale.set(1, 1, 1);
+            mesh.rotation.x = 90;
+            scene.add(mesh);
         }
     )
+
+    // texture loader
+    var textureLoader = new THREE.TextureLoader();
+    textureLoader.setCrossOrigin("anonymous");
+    textureLoader.load('Textures/jeans_texture.jpg', function (texture) {
+        // mesh is a group contains multiple sub-objects. Traverse and apply texture to all. 
+        mesh.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+
+            // apply texture
+            child.material.map = texture
+            child.material.needsUpdate = true;
+            }
+        });
+    });
 }
 
 function render(){
