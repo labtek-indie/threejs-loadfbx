@@ -22,6 +22,8 @@ function init(){
 
     // scene
     scene = new THREE.Scene();
+    scene.background = new THREE.Color( 0x55f5f5 );
+
 
     // renderer
     renderer = new THREE.WebGLRenderer();
