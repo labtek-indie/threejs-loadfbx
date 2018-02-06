@@ -1,5 +1,8 @@
-var camera, scene, renderer;
-var container, mesh;
+var camera, scene, renderer, renderermov;
+var container, mesh, meshMov;
+var video, image, imageContext,
+imageReflection, imageReflectionContext, imageReflectionGradient,
+texture, textureReflection;
 
 var wolf = 'model/Wolf-Rigged-and-Game-Ready/Wolf_fbx.fbx';
 var capoeira = 'model/Capoeira.fbx';
@@ -7,7 +10,7 @@ var minion = 'Minion_FBX1.fbx';
 var box = 'assets/aaa.fbx'
 
 init();
-render();
+animate();
 
 function init(){
     // container
@@ -16,27 +19,19 @@ function init(){
 
     // camera
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000 );
-    camera.position.set(0, -90, 0);
-    camera.position.z = 1000;
+    camera.position.set(0, 0, 500);
+    // camera.position.z = 1000;
     // camera.position.y = -90;    
 
     // scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 0x55f5f5 );
 
-
     // renderer
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
-
-    // plane ground 
-    var planeGeometry = new THREE.PlaneBufferGeometry( 10, 20, 32 );
-    var planeMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00} );
-    var plane = new THREE.Mesh( planeGeometry, planeMaterial );
-    plane.position.set( 0, 0, -1);
-    scene.add( plane );
 
     // ambient light
     var ambient = new THREE.AmbientLight( 0x101030, 1.0);
@@ -56,10 +51,7 @@ function init(){
     spotlight.shadow.camera.far = 4000;
     spotlight.shadow.camera.fov = 30;
     scene.add(spotlight);
-
-    // camera look at
-    camera.lookAt(plane.position);
-
+    
     // loader
     var loader = new THREE.FBXLoader();
     loader.load(
@@ -69,30 +61,57 @@ function init(){
         // box,
         function(object){
             mesh = object;
-            mesh.scale.set(20, 20, 20);
-            // mesh.scale.set(1, 1, 1);
-            mesh.rotation.x = 0;
+            mesh.scale.set(5, 5, 5);
+            mesh.rotation.x = (35*Math.PI) / 180 ;
             scene.add(mesh);
         }
-    )
+    ) 
 
-    // texture loader
-    // var textureLoader = new THREE.TextureLoader();
-    // textureLoader.setCrossOrigin("anonymous");
-    // textureLoader.load('Textures/jeans_texture.jpg', function (texture) {
-    //     // mesh is a group contains multiple sub-objects. Traverse and apply texture to all. 
-    //     mesh.traverse(function (child) {
-    //         if (child instanceof THREE.Mesh) {
+    video = document.createElement('video');
+    video.width = 1920;
+    video.height= 1080;
+    video.loop = true;
+    video.muted = true;
+    video.src ="assets/BEI-uang-inflasi-movie/UANG _ INFLASI ASSET-09.mp4";
+    video.setAttribute( 'webkit-playsinline', 'webkit-playsinline' );
+    video.play();
+    
+    texture = new THREE.VideoTexture(video);
+    texture.minFilter = THREE.LinearFilter;
+    texture.format = THREE.RGBFormat;
 
-    //         // apply texture
-    //         child.material.map = texture
-    //         child.material.needsUpdate = true;
-    //         }
-    //     });
-    // });
+    // var material   = new THREE.MeshBasicMaterial( { map : texture } );
+
+    // plane movie 
+    var planeGeometry = new THREE.PlaneBufferGeometry( 800, 450, 32 );
+    var planeMaterial = new THREE.MeshBasicMaterial( { map : texture } );
+    var plane = new THREE.Mesh( planeGeometry, planeMaterial );
+    plane.position.set( 0, 0, -100);
+    scene.add( plane );
+
+
+    stats = new Stats();
+    container.appendChild( stats.dom );
+
+    // camera look at
+    camera.lookAt(plane.position);
+
 }
 
 function render(){
-    requestAnimationFrame(render);
+
+    // if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
+        // imageContext.drawImage( video, 0, 0 );
+        // if ( texture ) texture.needsUpdate = true;
+    // }
+
     renderer.render(scene, camera);
+}
+
+function animate(){
+
+    requestAnimationFrame(animate);
+    render();
+    stats.update();
+
 }
