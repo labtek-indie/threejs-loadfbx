@@ -1,6 +1,9 @@
 # model 
 model/
 
+# assets
+assets/
+
 # Logs
 logs
 *.log
