@@ -99,12 +99,6 @@ function init(){
 }
 
 function render(){
-
-    // if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
-        // imageContext.drawImage( video, 0, 0 );
-        // if ( texture ) texture.needsUpdate = true;
-    // }
-
     renderer.render(scene, camera);
 }
 
